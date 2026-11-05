@@ -1,0 +1,10 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro';
+import { SITE_SLOGAN } from '../data/site';
+---
+<SiteLayout title="Sobre o MOBO TECH" description="Conheça a proposta do MOBO TECH: tornar a tecnologia mais acessível por meio de explicações claras, projetos e reaproveitamento.">
+  <section class="section prose-page"><div class="eyebrow">SOBRE O PROJETO</div><h1>Tecnologia para<br /><em>entender e construir.</em></h1><p class="page-lede">{SITE_SLOGAN}</p>
+    <div class="article-prose"><p>O MOBO TECH é um portal independente em construção para quem quer explorar tecnologia sem achar que precisa começar com equipamentos caros ou conhecimento avançado.</p><h2>Aprender fazendo</h2><p>Queremos aproximar ideias de projetos práticos: Maker e DIY, Linux, automação, servidores domésticos, hardware, inteligência artificial e reaproveitamento tecnológico. O foco é explicar possibilidades e limites com clareza, sem prometer que todo equipamento serve para qualquer projeto.</p><h2>Conteúdo com transparência</h2><p>As pautas em planejamento não são notícias nem artigos publicados. Antes de publicar um guia, a intenção é conferir compatibilidade, riscos e fontes, e sinalizar o que ainda não foi testado.</p><h2>Um projeto em evolução</h2><p>O portal está sendo preparado para publicação. Integrações como newsletter, anúncios e afiliados ainda não estão ativas.</p></div>
+    <a class="button button-outline" href="/categorias/">Explore os temas <span>↗</span></a>
+  </section>
+</SiteLayout>

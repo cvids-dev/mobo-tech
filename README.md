@@ -1,30 +1,41 @@
 # MOBO TECH — versão inicial
 
-Portal estático responsivo com identidade visual futurista escura.
+Portal independente para tecnologia prática: entender, experimentar e construir. O foco editorial está em Maker, DIY e reaproveitamento, além de IA, hardware, Linux, automação, redes e ciência.
 
-## Arquivos
-- `index.html`: estrutura, metadados SEO, Open Graph e dados estruturados iniciais.
-- `styles.css`: identidade visual e layout responsivo.
-- `app.js`: menu mobile, filtros de categoria e busca local.
-- `assets/favicon.svg`: ícone vetorial.
+## Tecnologias e desenvolvimento
 
-## Antes de publicar
-1. Registrar um domínio.
-2. Substituir `SEU-DOMINIO-AQUI` no `index.html` pela URL real (sem barra final nos metadados).
-3. Atualizar o endereço de contato no rodapé.
-4. Criar páginas reais para cada artigo e páginas institucionais: Sobre, Contato, Política de Privacidade, Política de Cookies e divulgação de afiliados.
-5. Remover o formulário demonstrativo ou conectá-lo a um serviço de newsletter com consentimento.
-6. Substituir as pautas marcadas como "EM BREVE" por artigos completos e revisados antes de anunciar o portal como publicação ativa.
+Astro e TypeScript geram páginas estáticas; artigos usam Markdown com esquema validado; o CSS próprio preserva a identidade visual. Requisitos locais: Node.js 20.3.0 ou mais recente e npm.
 
-## Publicação recomendada
-Usar Cloudflare Pages para servir o site estático. Não é necessário executar outro container no servidor Mobo. O Mobo pode apoiar o fluxo editorial e automações via n8n, preservando os containers já existentes.
+```bash
+npm install
+npm run dev
+```
 
-Para teste local, basta abrir `index.html` no navegador. Para publicar, enviar o conteúdo desta pasta a um repositório Git e conectar o repositório ao Cloudflare Pages (framework preset: None; build command vazio; output directory `/` se a raiz do repositório for o site).
+Abra a URL local indicada no terminal. Para validar e visualizar a compilação:
 
-## SEO — próxima etapa
-- Definir domínio e canonical definitivo.
-- Criar `robots.txt` e `sitemap.xml` com URLs reais.
-- Criar páginas individuais com título, descrição, autor, data de publicação/atualização, fontes e links internos.
-- Gerar JSON-LD `Article` por artigo e `BreadcrumbList` nas páginas internas.
-- Configurar Google Search Console e Analytics/alternativa de privacidade.
-- Otimizar imagens em WebP/AVIF, com dimensões definidas e texto alternativo.
+```bash
+npm run build
+npm run preview
+```
+
+O site compilado fica em `dist/`.
+
+## Artigos
+
+Crie arquivos `.md` em `src/content/articles/`. Consulte o esquema em `src/content.config.ts`. O campo `draft` é `true` por padrão; somente artigos revisados e explicitamente marcados `draft: false` são publicados. As pautas da homepage são ideias editoriais, não notícias ou artigos já publicados.
+
+## SEO e endereço
+
+O build usa `SITE_URL` para canonical, Open Graph, dados estruturados e sitemap. O fallback `https://mobo-tech.pages.dev` é apenas o endereço planejado; confirme o projeto Cloudflare e configure o endereço real antes do lançamento:
+
+```bash
+SITE_URL=https://SEU-PROJETO.pages.dev npm run build
+```
+
+## Cloudflare Pages — ainda não conectado
+
+Após criar o projeto Cloudflare, conecte este repositório e configure o preset Astro, comando `npm run build`, diretório `dist` e variável de build `SITE_URL` com o endereço `.pages.dev` efetivo. Defina `main` como branch de produção depois de revisar e integrar a branch de desenvolvimento. O plano gratuito e a disponibilidade do nome dependem da conta e da plataforma; nenhum deploy foi configurado nesta etapa.
+
+## Integrações e servidor doméstico
+
+Busca e filtros são locais. Newsletter, contato, analytics, anúncios e afiliados não enviam dados e ainda não estão conectados. Páginas legais e conteúdo precisam de revisão editorial antes da divulgação pública. O portal destina-se a hospedagem estática no Cloudflare Pages; nenhum container ou serviço do servidor doméstico MOBO é utilizado ou alterado.

@@ -1,0 +1,11 @@
+---
+import { getCollection } from 'astro:content';
+import SiteLayout from '../layouts/SiteLayout.astro';
+const articles = await getCollection('articles', ({ data }) => data.draft === false);
+const query = Astro.url.searchParams.get('q')?.trim() ?? '';
+---
+<SiteLayout title="Pesquisar no MOBO TECH" description="Encontre artigos e guias publicados no MOBO TECH.">
+  <section class="section search-page"><div class="eyebrow">BUSCA NO PORTAL</div><h1>O que você quer<br /><em>descobrir?</em></h1><form class="page-search" action="/pesquisa/" method="get"><label for="query">Pesquisar artigos</label><div class="email-row"><input id="query" name="q" type="search" value={query} placeholder="Ex.: Linux, ESP32, automação" /><button type="submit" aria-label="Pesquisar">⌕</button></div></form>
+    {articles.length ? <div class="published-articles">{articles.filter((article) => !query || `${article.data.title} ${article.data.description} ${article.data.tags.join(' ')}`.toLocaleLowerCase('pt-BR').includes(query.toLocaleLowerCase('pt-BR'))).map((article) => <article class="published-card"><span class="eyebrow">{article.data.category.replaceAll('-', ' ')}</span><h2><a href={`/artigos/${article.id}/`}>{article.data.title}</a></h2><p>{article.data.description}</p></article>)}</div> : <div class="empty-state"><h2>Ainda não há artigos publicados.</h2><p>As ideias em planejamento não aparecem como resultados de artigos. Volte quando os primeiros guias revisados estiverem no ar.</p><a class="button button-outline" href="/categorias/">Explorar categorias <span>↗</span></a></div>}
+  </section>
+</SiteLayout>

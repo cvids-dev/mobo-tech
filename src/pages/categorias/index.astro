@@ -1,0 +1,11 @@
+---
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import { categories } from '../../data/editorial';
+---
+<SiteLayout title="Categorias de tecnologia" description="Explore Maker, DIY, reaproveitamento, IA, hardware, Linux, casa inteligente, redes, ciência e guias práticos no MOBO TECH.">
+  <section class="section directory-page"><div class="eyebrow">EXPLORE O MOBO TECH</div><h1>Uma ideia pode<br />começar em <em>qualquer lugar.</em></h1><p class="page-lede">Escolha um tema e descubra o que você pode entender, experimentar ou construir.</p>
+    <div class="category-grid directory-grid">{categories.map((category, index) => <a class="category-card" href={`/categorias/${category.slug}/`} data-search="true" data-search-category="CATEGORIA" data-search-title={category.title}>
+      <span class="category-number">{String(index + 1).padStart(2, '0')} / {category.short.toUpperCase()}</span><div class="category-icon" aria-hidden="true">{category.icon}</div><h2>{category.title}</h2><p>{category.description}</p><span class="category-topics">{category.topics}</span><span class="card-arrow" aria-hidden="true">↗</span>
+    </a>)}</div>
+  </section>
+</SiteLayout>

@@ -1,0 +1,35 @@
+---
+import { getCollection, render } from 'astro:content';
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import { categories } from '../../data/editorial';
+
+export async function getStaticPaths() {
+  const published = await getCollection('articles', ({ data }) => data.draft === false);
+  return published.map((article) => ({ params: { slug: article.id }, props: { article } }));
+}
+
+const { article } = Astro.props;
+const { Content } = await render(article);
+const category = categories.find((item) => item.slug === article.data.category);
+const readingMinutes = Math.max(1, Math.ceil((article.body ?? article.data.description).split(/\s+/).length / 220));
+const publishedLabel = article.data.pubDate?.toLocaleDateString('pt-BR', { dateStyle: 'long', timeZone: 'UTC' });
+---
+<SiteLayout title={article.data.title} description={article.data.description} type="article" publishedTime={article.data.pubDate} updatedTime={article.data.updatedDate} author={article.data.author} breadcrumbs={[{ name: 'Início', url: '/' }, { name: 'Categorias', url: '/categorias/' }, { name: category?.title ?? 'Artigo', url: `/categorias/${article.data.category}/` }, { name: article.data.title, url: `/artigos/${article.id}/` }]}>
+  <div class="article-page section">
+    <nav class="breadcrumbs" aria-label="Você está aqui"><a href="/">Início</a><span> / </span><a href={`/categorias/${article.data.category}/`}>{category?.title ?? 'Categoria'}</a></nav>
+    <header class="article-header"><span class="eyebrow">{category?.short ?? 'MOBO TECH'}</span><h1>{article.data.title}</h1><p class="article-lede">{article.data.description}</p><div class="article-byline"><span>Por {article.data.author}</span>{publishedLabel && <time datetime={article.data.pubDate?.toISOString()}>{publishedLabel}</time>}<span>{readingMinutes} min de leitura</span></div></header>
+    {article.data.cover && <figure class="article-cover"><img src={article.data.cover} alt={article.data.coverAlt ?? ''} loading="eager" /><figcaption>{article.data.coverAlt}</figcaption></figure>}
+    <div class="article-prose"><Content /></div>
+    <div class="article-share"><span>Achou útil? Compartilhe este guia.</span><button type="button" id="share-article">Compartilhar artigo</button></div>
+    <aside class="related-box"><span class="eyebrow">CONTINUE EXPLORANDO</span><h2>Mais tecnologia, no seu ritmo.</h2><p>Descubra outros assuntos e projetos do MOBO TECH.</p><a class="button button-outline" href={`/categorias/${article.data.category}/`}>Ver conteúdos relacionados <span>↗</span></a></aside>
+  </div>
+  <script>
+    const shareButton = document.querySelector<HTMLButtonElement>('#share-article');
+    shareButton?.addEventListener('click', async () => {
+      try {
+        if (navigator.share) await navigator.share({ title: document.title, url: location.href });
+        else if (navigator.clipboard) { await navigator.clipboard.writeText(location.href); shareButton.textContent = 'Link copiado'; }
+      } catch { /* Compartilhamento cancelado pelo leitor. */ }
+    });
+  </script>
+</SiteLayout>

@@ -1,0 +1,66 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro';
+import { categories, editorialPitches } from '../data/editorial';
+import { SITE_DESCRIPTION } from '../data/site';
+const featuredCategories = categories.filter((category) => ['maker-diy', 'reaproveitamento', 'linux-sistemas', 'hardware', 'inteligencia-artificial', 'casa-inteligente'].includes(category.slug));
+const artClasses = ['image-cyber', 'image-tv', 'image-server', 'image-ai'];
+---
+<SiteLayout title="Tecnologia para entender, experimentar e construir" description={SITE_DESCRIPTION}>
+  <section class="hero">
+    <div class="hero-grid" aria-hidden="true"></div>
+    <div class="hero-copy">
+      <div class="eyebrow"><span class="pulse"></span> TECNOLOGIA SEM BARREIRAS</div>
+      <h1>O futuro não é<br />assistir. É <em>construir.</em></h1>
+      <p>Ideias, projetos e conhecimento para explorar a tecnologia por todos os ângulos — com curiosidade, criatividade e o que você já tem à mão.</p>
+      <div class="hero-actions"><a class="button button-primary" href="#explorar">Explore o portal <span>↗</span></a><a class="text-link" href="#maker">Descubra o universo maker <span>→</span></a></div>
+      <div class="hero-meta"><span>MOBO TECH</span><span class="meta-line"></span><span>TECNOLOGIA PARA FAZER ACONTECER</span></div>
+    </div>
+    <div class="hero-art" role="img" aria-label="Núcleo MOBO cercado por órbitas digitais">
+      <div class="orbit orbit-a"></div><div class="orbit orbit-b"></div><div class="orbit orbit-c"></div>
+      <div class="core"><div class="core-inner">M<span>.</span></div></div>
+      <span class="float-tag tag-top">IDEAS ONLINE <b>●</b></span><span class="float-tag tag-bottom">IMAGINE → CONSTRUA</span>
+      <span class="art-coordinate">MAKER / DIY<br />TECNOLOGIA ACESSÍVEL</span>
+    </div>
+    <div class="hero-bottom"><span>ROLE PARA EXPLORAR</span><span class="scroll-mark">↓</span><span>ENTENDA · EXPERIMENTE · CONSTRUA</span></div>
+  </section>
+
+  <section class="ticker" aria-label="Temas do portal"><div class="ticker-track"><span>MAKER & DIY</span><b>✳</b><span>REAPROVEITAMENTO</span><b>✳</b><span>LINUX & HOMELAB</span><b>✳</b><span>CASA INTELIGENTE</span><b>✳</b><span>INTELIGÊNCIA ARTIFICIAL</span><b>✳</b><span>HARDWARE</span></div></section>
+
+  <section class="section content-section" id="explorar">
+    <div class="section-heading"><div><div class="eyebrow">01 — EXPLORE O ECOSSISTEMA</div><h2>Tecnologia em <em>todas as direções.</em></h2></div><p>Do código ao circuito, do laboratório à sua casa. Encontre um assunto, comece pelo básico e avance no seu ritmo.</p></div>
+    <div class="category-grid">
+      {featuredCategories.map((category, index) => <a class:list={['category-card', index === 0 && 'category-feature']} href={`/categorias/${category.slug}/`} data-filter={category.slug}>
+        <span class="category-number">{String(index + 1).padStart(2, '0')} / {category.short.toUpperCase()}</span><div class="category-icon" aria-hidden="true">{category.icon}</div><h3>{category.title}</h3><p>{category.description}</p><span class="card-arrow" aria-hidden="true">↗</span>{index === 0 && <div class="card-lines" aria-hidden="true"></div>}
+      </a>)}
+      <a class="category-card category-more" href="/categorias/"><span class="category-number">+ 4 / MAIS ASSUNTOS</span><div class="category-icon" aria-hidden="true">＋</div><h3>Explore todas<br />as categorias</h3><p>Ciência, segurança, gadgets e muito mais.</p><span class="card-arrow" aria-hidden="true">↗</span></a>
+    </div>
+  </section>
+
+  <section class="maker-section" id="maker">
+    <div class="maker-backdrop" aria-hidden="true"></div><div class="maker-inner">
+      <div class="eyebrow">02 — CULTURA MAKER / FAÇA VOCÊ MESMO</div>
+      <div class="maker-layout"><div><h2>Não jogue fora.<br /><em>Reinvente.</em></h2><p>Equipamentos antigos podem ganhar uma segunda vida. O MOBO TECH quer mostrar caminhos possíveis, explicar limites e ajudar você a construir com mais autonomia.</p><a class="button button-outline" href="/categorias/reaproveitamento/">Explore o reaproveitamento <span>↗</span></a></div>
+        <div class="maker-visual" aria-label="Ilustração de uma bancada digital maker"><div class="device device-back"></div><div class="device device-front"><div class="device-screen"><div class="screen-top">MOBO_LAB <span>● READY</span></div><div class="screen-code"><i>01</i> IDEA → PROJECT<br /><i>02</i> REUSE / REPAIR<br /><i>03</i> BUILD TOGETHER</div><div class="screen-bars"><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b></div></div><div class="device-keys">▦ ▦ ▦ ▦ ▦ ▦ ▦ ▦ ▦ ▦ ▦</div></div><span class="device-label">MAKER / DIY / REUSE</span></div>
+      </div><div class="maker-topics"><span>ARDUINO & ESP32</span><span>LINUX & HOMELAB</span><span>REAPROVEITAMENTO</span><span>CASA INTELIGENTE</span><span>PROJETOS PRÁTICOS</span></div>
+    </div>
+  </section>
+
+  <section class="section articles-section" id="artigos">
+    <div class="section-heading"><div><div class="eyebrow">03 — CONHECIMENTO EM MOVIMENTO</div><h2>Ideias para <em>tirar do papel.</em></h2></div><a class="text-link" href="/categorias/">Ver categorias <span>→</span></a></div>
+    <div class="filter-row" role="group" aria-label="Filtrar pautas por tema"><button class="filter-chip active" type="button" data-filter="todos">Tudo</button><button class="filter-chip" type="button" data-filter="maker-diy">Maker & DIY</button><button class="filter-chip" type="button" data-filter="reaproveitamento">Reaproveitamento</button><button class="filter-chip" type="button" data-filter="linux-sistemas">Linux & Homelab</button><button class="filter-chip" type="button" data-filter="inteligencia-artificial">IA</button></div>
+    <div class="article-grid">
+      {editorialPitches.map((pitch, index) => <article class="article-card" data-category={pitch.category} data-search="true" data-search-category="PAUTA — {pitch.label}" data-search-title={pitch.title}>
+        <div class:list={['article-image', artClasses[index]]} aria-hidden="true"><span class="image-label">{pitch.label}</span>
+          {index === 0 && <div class="server-art"><div class="server-unit"><b></b><b></b><b></b><b></b></div><div class="server-unit second"><b></b><b></b><b></b><b></b></div></div>}
+          {index === 1 && <div class="tvbox-art"><div class="tvbox">TV<span>BOX</span><i>●</i></div><div class="tv-glow"></div></div>}
+          {index === 2 && <div class="cyberdeck-art"><div class="cyber-screen">MOBO<br /><b>BUILD_01</b><small>REUSE / BUILD / LEARN</small></div><div class="cyber-keys"></div></div>}
+          {index === 3 && <div class="ai-art"><div class="ai-orb">AI</div><div class="ai-ring"></div></div>}
+        </div>
+        <div class="article-info"><div class="article-meta"><span>{pitch.label}</span><span>PAUTA EM PREPARAÇÃO</span></div><h3>{pitch.title}</h3><p>{pitch.summary}</p><span class="read-link">IDEIA EDITORIAL — AINDA NÃO PUBLICADA</span></div>
+      </article>)}
+    </div>
+    <p class="content-note">Transparência editorial: estes cartões representam temas em planejamento. Ainda não são artigos nem notícias publicados.</p>
+  </section>
+
+  <section class="newsletter-section" id="newsletter"><div class="newsletter-box"><div><div class="eyebrow">04 — UM PROJETO EM CONSTRUÇÃO</div><h2>Boas ideias<br />começam <em>com curiosidade.</em></h2><p>Estamos preparando os primeiros conteúdos. A newsletter ainda não está conectada; não envie seu e-mail por este site nesta fase.</p></div><div class="newsletter-placeholder"><span class="newsletter-status">INTEGRAÇÃO PENDENTE</span><p>Quando houver um provedor e consentimento configurados, este espaço poderá receber a newsletter.</p><a class="text-link" href="/sobre/">Conheça a proposta <span>→</span></a></div></div></section>
+</SiteLayout>

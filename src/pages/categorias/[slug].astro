@@ -1,0 +1,19 @@
+---
+import { getCollection } from 'astro:content';
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import { categories } from '../../data/editorial';
+
+export function getStaticPaths() {
+  return categories.map((category) => ({ params: { slug: category.slug }, props: { category } }));
+}
+
+const { category } = Astro.props;
+const articles = (await getCollection('articles', ({ data }) => data.draft === false && data.category === category.slug))
+  .sort((a, b) => (b.data.pubDate?.valueOf() ?? 0) - (a.data.pubDate?.valueOf() ?? 0));
+---
+<SiteLayout title={category.title} description={category.description}>
+  <section class="section category-page"><nav class="breadcrumbs" aria-label="Você está aqui"><a href="/">Início</a><span> / </span><a href="/categorias/">Categorias</a></nav>
+    <div class="eyebrow">CATEGORIA / {category.short.toUpperCase()}</div><h1>{category.title}<br /><em>para explorar.</em></h1><p class="page-lede">{category.description} <span class="category-topics">{category.topics}</span></p>
+    {articles.length ? <div class="published-articles">{articles.map((article) => <article class="published-card"><span class="eyebrow">{category.short}</span><h2><a href={`/artigos/${article.id}/`}>{article.data.title}</a></h2><p>{article.data.description}</p><a class="read-link" href={`/artigos/${article.id}/`}>LER ARTIGO ↗</a></article>)}</div> : <div class="empty-state"><span class="eyebrow">CONTEÚDO EM PREPARAÇÃO</span><h2>Os primeiros guias estão sendo preparados.</h2><p>Esta categoria ainda não tem artigos publicados. Preferimos publicar menos e revisar cada conteúdo com cuidado.</p><a class="button button-outline" href="/categorias/">Explorar outras categorias <span>↗</span></a></div>}
+  </section>
+</SiteLayout>

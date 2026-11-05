@@ -1,0 +1,56 @@
+---
+import { SITE_DESCRIPTION, SITE_NAME } from '../data/site';
+
+interface Props {
+  title: string;
+  description?: string;
+  type?: 'website' | 'article';
+  publishedTime?: Date;
+  updatedTime?: Date;
+  author?: string;
+  breadcrumbs?: { name: string; url: string }[];
+}
+
+const { title, description = SITE_DESCRIPTION, type = 'website', publishedTime, updatedTime, author, breadcrumbs } = Astro.props;
+const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).toString() : undefined;
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@type': type === 'article' ? 'BlogPosting' : 'WebSite',
+  name: SITE_NAME,
+  headline: title,
+  description,
+  inLanguage: 'pt-BR',
+  ...(canonical ? { url: canonical } : {}),
+  ...(publishedTime ? { datePublished: publishedTime.toISOString() } : {}),
+  ...(updatedTime ? { dateModified: updatedTime.toISOString() } : {}),
+  ...(type === 'article' ? {
+    publisher: { '@type': 'Organization', name: SITE_NAME },
+    ...(author ? { author: { '@type': author === SITE_NAME ? 'Organization' : 'Person', name: author } } : {}),
+    ...(canonical ? { mainEntityOfPage: canonical } : {}),
+  } : {}),
+};
+const breadcrumbData = type === 'article' && canonical && breadcrumbs?.length ? {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: breadcrumbs.map((item, index) => ({
+    '@type': 'ListItem',
+    position: index + 1,
+    name: item.name,
+    item: Astro.site ? new URL(item.url, Astro.site).toString() : item.url,
+  })),
+} : undefined;
+---
+<title>{title} | {SITE_NAME}</title>
+<meta name="description" content={description} />
+<meta name="robots" content="index,follow" />
+<meta name="theme-color" content="#080b12" />
+{canonical && <link rel="canonical" href={canonical} />}
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
+<meta property="og:type" content={type} />
+<meta property="og:site_name" content={SITE_NAME} />
+<meta property="og:title" content={`${title} | ${SITE_NAME}`} />
+<meta property="og:description" content={description} />
+<meta property="og:locale" content="pt_BR" />
+{canonical && <meta property="og:url" content={canonical} />}
+<meta name="twitter:card" content="summary" />
+<script type="application/ld+json" set:html={JSON.stringify(breadcrumbData ? [structuredData, breadcrumbData] : structuredData)} />

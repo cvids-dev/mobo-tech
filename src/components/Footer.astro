@@ -1,0 +1,14 @@
+---
+import { SITE_SLOGAN } from '../data/site';
+---
+<footer class="site-footer">
+  <a class="brand" href="/" aria-label="MOBO TECH — início">
+    <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span>
+    <span class="brand-name">MOBO<span>TECH</span><small>TECNOLOGIA ACESSÍVEL</small></span>
+  </a>
+  <p>{SITE_SLOGAN}</p>
+  <nav class="footer-links" aria-label="Links institucionais">
+    <a href="/sobre/">Sobre</a><a href="/contato/">Contato</a><a href="/politica-de-privacidade/">Privacidade</a><a href="/politica-de-cookies/">Cookies</a><a href="/termos-de-uso/">Termos</a><a href="/rss.xml">RSS</a>
+  </nav>
+  <div class="footer-bottom"><span>© {new Date().getFullYear()} MOBO TECH</span><span>FEITO PARA QUEM É CURIOSO.</span><a href="/categorias/">EXPLORAR CATEGORIAS ↗</a></div>
+</footer>

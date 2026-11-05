@@ -1,0 +1,125 @@
+---
+import SEO from '../components/SEO.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { getCollection } from 'astro:content';
+import '../styles/global.css';
+import '../styles/editorial.css';
+
+interface Props {
+  title: string;
+  description?: string;
+  type?: 'website' | 'article';
+  publishedTime?: Date;
+  updatedTime?: Date;
+  author?: string;
+  breadcrumbs?: { name: string; url: string }[];
+}
+const { title, description, type, publishedTime, updatedTime, author, breadcrumbs } = Astro.props;
+const searchableArticles = await getCollection('articles', ({ data }) => data.draft === false);
+---
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <SEO title={title} description={description} type={type} publishedTime={publishedTime} updatedTime={updatedTime} author={author} breadcrumbs={breadcrumbs} />
+  </head>
+  <body>
+    <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+    <div class="ambient ambient-one" aria-hidden="true"></div>
+    <div class="ambient ambient-two" aria-hidden="true"></div>
+    <Header />
+    <main id="conteudo"><slot /></main>
+    <Footer />
+    <div class="search-modal" id="search-modal" role="dialog" aria-modal="true" aria-label="Buscar no portal" aria-hidden="true">
+      <div class="search-panel">
+        <button class="search-close" type="button" aria-label="Fechar busca">×</button>
+        <div class="eyebrow">BUSCA NO MOBO TECH</div>
+        <label class="sr-only" for="site-search">O que você quer descobrir?</label>
+        <input type="search" id="site-search" placeholder="O que você quer descobrir?" autocomplete="off" />
+        <p>Pesquise títulos e descrições do portal.</p>
+        <div id="search-results" aria-live="polite"></div>
+      </div>
+    </div>
+    <div class="sr-only" id="search-index" aria-hidden="true">
+      {searchableArticles.map((article) => <div data-search="true" data-search-category={article.data.category} data-search-title={article.data.title} data-search-href={`/artigos/${article.id}/`}>{article.data.description} {article.data.tags.join(' ')}</div>)}
+    </div>
+    <script>
+      const menuToggle = document.querySelector<HTMLButtonElement>('.menu-toggle');
+      const nav = document.querySelector<HTMLElement>('.main-nav');
+      menuToggle?.addEventListener('click', () => {
+        const open = nav?.classList.toggle('open') ?? false;
+        menuToggle.setAttribute('aria-expanded', String(open));
+        menuToggle.setAttribute('aria-label', open ? 'Fechar menu' : 'Abrir menu');
+      });
+      nav?.querySelectorAll('a').forEach((link) => link.addEventListener('click', () => {
+        nav.classList.remove('open');
+        menuToggle?.setAttribute('aria-expanded', 'false');
+        menuToggle?.setAttribute('aria-label', 'Abrir menu');
+      }));
+
+      const chips = [...document.querySelectorAll<HTMLElement>('[data-filter]')];
+      const cards = [...document.querySelectorAll<HTMLElement>('.article-card[data-category]')];
+      function filterArticles(category: string) {
+        cards.forEach((card) => { card.hidden = category !== 'todos' && card.dataset.category !== category; });
+        document.querySelectorAll<HTMLElement>('.filter-chip').forEach((chip) => chip.classList.toggle('active', chip.dataset.filter === category));
+      }
+      chips.forEach((control) => control.addEventListener('click', (event) => {
+        const category = control.dataset.filter;
+        if (!category || !cards.length) return;
+        if (control.tagName === 'A') {
+          event.preventDefault();
+          document.querySelector('#artigos')?.scrollIntoView({ behavior: 'smooth' });
+        }
+        filterArticles(category);
+      }));
+
+      const modal = document.querySelector<HTMLElement>('#search-modal');
+      const searchInput = document.querySelector<HTMLInputElement>('#site-search');
+      const results = document.querySelector<HTMLElement>('#search-results');
+      const searchOpen = document.querySelector<HTMLButtonElement>('.search-open');
+      const searchClose = document.querySelector<HTMLButtonElement>('.search-close');
+      const allSearchCards = [...document.querySelectorAll<HTMLElement>('[data-search]')];
+      function closeSearch() {
+        modal?.classList.remove('open');
+        modal?.setAttribute('aria-hidden', 'true');
+        searchOpen?.focus();
+      }
+      searchOpen?.addEventListener('click', () => {
+        modal?.classList.add('open');
+        modal?.setAttribute('aria-hidden', 'false');
+        window.setTimeout(() => searchInput?.focus(), 30);
+      });
+      searchClose?.addEventListener('click', closeSearch);
+      modal?.addEventListener('click', (event) => { if (event.target === modal) closeSearch(); });
+      document.addEventListener('keydown', (event) => { if (event.key === 'Escape' && modal?.classList.contains('open')) closeSearch(); });
+      searchInput?.addEventListener('input', () => {
+        if (!results || !searchInput) return;
+        const query = searchInput.value.trim().toLocaleLowerCase('pt-BR');
+        results.replaceChildren();
+        if (!query) return;
+        const found = allSearchCards.filter((item) => (item.textContent || '').toLocaleLowerCase('pt-BR').includes(query));
+        found.forEach((item) => {
+          const link = document.createElement('a');
+          link.className = 'search-result';
+          link.href = item.getAttribute('data-search-href') || '#artigos';
+          const category = document.createElement('span');
+          category.textContent = item.getAttribute('data-search-category') || 'MOBO TECH';
+          link.append(category, document.createTextNode(item.getAttribute('data-search-title') || item.textContent || ''));
+          link.addEventListener('click', closeSearch);
+          results.append(link);
+        });
+        if (!found.length) {
+          const message = document.createElement('p');
+          message.className = 'search-result';
+          message.textContent = 'Nenhum resultado. Tente outra palavra.';
+          results.append(message);
+        }
+      });
+    </script>
+  </body>
+</html>
